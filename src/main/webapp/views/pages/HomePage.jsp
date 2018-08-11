@@ -7,31 +7,43 @@
   </head>
 
   <body>
+    <form id="magnet-input">
+      <input name="torrentId" placeholder="magnet:"><button type="submit">Play</button>
+    </form>
+
     <div id="hero">
       <div id="output">
         <div id="progressBar"></div>
+        <!-- The video player will be added here -->
       </div>
+
+      <!-- Statistics -->
       <div id="status">
         <div>
           <span class="show-leech">Downloading </span>
           <span class="show-seed">Seeding </span>
-          <code>
-            <a id="torrentLink" href="https://webtorrent.io/torrents/sintel.torrent">sintel.torrent</a>
-          </code>
+          <code id="streamedFileName"></code>
           <span class="show-leech"> from </span>
           <span class="show-seed"> to </span>
-          <code id="numPeers">0 peers</code>.
+          <code id="numPeers">0 peers</code>
         </div>
+
         <div>
-          <code id="downloaded"></code>
-          of <code id="total"></code>
-          - <span id="remaining"></span><br/>
-          &#x2198;<code id="downloadSpeed">0 b/s</code>
-          / &#x2197;<code id="uploadSpeed">0 b/s</code>
+          <code id="downloaded"></code> of <code id="total"></code> - <span id="remaining"></span>
+        </div>
+
+        <div>
+          &#x2198;<code id="downloadSpeed">0 b/s</code>/ &#x2197;<code id="uploadSpeed">0 b/s</code>
         </div>
       </div>
     </div>
+    
+    <h4>Try <em>copy-pasting</em> this https url of a torrent to the input box:</h4>
+    
+    <pre>https://webtorrent.io/torrents/sintel.torrent</pre>
 
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
 
     <!-- Include the latest version of WebTorrent -->
     <script src="https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js"></script>

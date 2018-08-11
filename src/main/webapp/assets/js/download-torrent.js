@@ -1,22 +1,70 @@
-var torrentId = 'https://webtorrent.io/torrents/sintel.torrent'
+// HTML elements
+var $body = $('body')
+var $progressBar = $('#progressBar')
+var $streamedFileName = $('#streamedFileName')
+var $numPeers = $('#numPeers')
+var $downloaded = $('#downloaded')
+var $total = $('#total')
+var $remaining = $('#remaining')
+var $uploadSpeed = $('#uploadSpeed')
+var $downloadSpeed = $('#downloadSpeed')
 
 var client = new WebTorrent()
 
-// HTML elements
-var $body = document.body
-var $progressBar = document.querySelector('#progressBar')
-var $numPeers = document.querySelector('#numPeers')
-var $downloaded = document.querySelector('#downloaded')
-var $total = document.querySelector('#total')
-var $remaining = document.querySelector('#remaining')
-var $uploadSpeed = document.querySelector('#uploadSpeed')
-var $downloadSpeed = document.querySelector('#downloadSpeed')
+client.on('error', function(err) {
+  console.error('ERROR: ' + err.message)
+})
 
-// Download the torrent
-client.add(torrentId, function (torrent) {
+// Download by form input
+$('form').submit(function(e) {
+  e.preventDefault() // Prevent page refresh
 
+  var torrentId = $('form input[name=torrentId]').val()
+
+  if (torrentId.length > 0)
+    downloadTorrent(torrentId)
+})
+
+// Download by URL hash
+onHashChange()
+window.addEventListener('hashchange', onHashChange)
+function onHashChange () {
+  var hash = decodeURIComponent(window.location.hash.substring(1)).trim()
+  if (hash !== '') downloadTorrent(hash)
+}
+
+function downloadTorrent(torrentId) {
+  console.log('Downloading torrent from ' + torrentId)
+  client.add(torrentId, onTorrent)
+}
+
+function onTorrent(torrent) {
+  torrent.on('warning', console.log)
+  torrent.on('error', console.log)
+
+  console.log('Got torrent metadata!')
+  console.log('Torrent info hash: ' + torrent.infoHash + ' ' +
+    '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
+    '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>')
+
+  // Find largest file
+  var largestFile = torrent.files[0]
+  for (var i = 1; i < torrent.files.length; i++) {
+    if (torrent.files[i].length > largestFile.length)
+      largestFile = torrent.files[i]
+  }
+
+  // Display name of the file being streamed
+  $streamedFileName.html(largestFile.name)
+  
   // Stream the file in the browser
-  torrent.files[0].appendTo('#output')
+  largestFile.appendTo('#output')
+
+  // hide magnet input
+  $('#magnet-input').slideUp()
+
+  // show player
+  $('#hero').slideDown()
 
   // Trigger statistics refresh
   torrent.on('done', onDone)
@@ -26,41 +74,43 @@ client.add(torrentId, function (torrent) {
   // Statistics
   function onProgress () {
     // Peers
-    $numPeers.innerHTML = torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers')
+    $numPeers.html(torrent.numPeers + (torrent.numPeers === 1 ? ' peer' : ' peers'))
 
     // Progress
     var percent = Math.round(torrent.progress * 100 * 100) / 100
-    $progressBar.style.width = percent + '%'
-    $downloaded.innerHTML = prettyBytes(torrent.downloaded)
-    $total.innerHTML = prettyBytes(torrent.length)
+    $progressBar.width(percent + '%')
+    $downloaded.html(prettyBytes(torrent.downloaded))
+    $total.html(prettyBytes(torrent.length))
 
     // Remaining time
     var remaining
     if (torrent.done) {
-      remaining = 'Done.'
+      remaining = 'Done'
     } else {
       remaining = moment.duration(torrent.timeRemaining / 1000, 'seconds').humanize()
-      remaining = remaining[0].toUpperCase() + remaining.substring(1) + ' remaining.'
+      remaining = remaining[0].toUpperCase() + remaining.substring(1) + ' remaining'
     }
-    $remaining.innerHTML = remaining
+    $remaining.html(remaining)
 
     // Speed rates
-    $downloadSpeed.innerHTML = prettyBytes(torrent.downloadSpeed) + '/s'
-    $uploadSpeed.innerHTML = prettyBytes(torrent.uploadSpeed) + '/s'
+    $downloadSpeed.html(prettyBytes(torrent.downloadSpeed) + '/s')
+    $uploadSpeed.html(prettyBytes(torrent.uploadSpeed) + '/s')
   }
+
   function onDone () {
     $body.className += ' is-seed'
     onProgress()
   }
-})
+}
 
 // Human readable bytes util
 function prettyBytes(num) {
-	var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
-	if (neg) num = -num
-	if (num < 1) return (neg ? '-' : '') + num + ' B'
-	exponent = Math.min(Math.floor(Math.log(num) / Math.log(1000)), units.length - 1)
-	num = Number((num / Math.pow(1000, exponent)).toFixed(2))
-	unit = units[exponent]
-	return (neg ? '-' : '') + num + ' ' + unit
+  var exponent, unit, neg = num < 0, units = ['B', 'kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+  if (neg)
+    num = -num
+  if (num < 1) return (neg ? '-' : '') + num + ' B'
+    exponent = Math.min(Math.floor(Math.log(num) / Math.log(1000)), units.length - 1)
+  num = Number((num / Math.pow(1000, exponent)).toFixed(2))
+  unit = units[exponent]
+  return (neg ? '-' : '') + num + ' ' + unit
 }
