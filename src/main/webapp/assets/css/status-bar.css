@@ -1,16 +1,13 @@
-#output video {
-  width: 100%;
-}
 #progressBar {
     height: 5px;
     width: 0%;
     background-color: #35b44f;
     transition: width .4s ease-in-out;
 }
-body.is-seed .show-seed {
+body .show-seed {
     display: inline;
 }
-body.is-seed .show-leech {
+body .show-leech {
     display: none;
 }
 .show-seed {
@@ -22,11 +19,6 @@ body.is-seed .show-leech {
     margin-left: 3px;
     margin-right: 3px;
     border-bottom: 1px dashed rgba(255,255,255,0.3);
-}
-
-.is-seed #hero {
-    background-color: #154820;
-    transition: .5s .5s background-color ease-in-out;
 }
 #hero {
     background-color: #2a3749;
