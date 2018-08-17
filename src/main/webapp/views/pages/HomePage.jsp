@@ -4,18 +4,21 @@
 <html lang="en">
   <head>
     <link href="<c:url value="/assets/css/status-bar.css" />" rel="stylesheet">
+    <link href="https://vjs.zencdn.net/7.1.0/video-js.css" rel="stylesheet">
   </head>
 
   <body>
-    <form id="magnet-input">
-      <input name="torrentId" placeholder="magnet:"><button type="submit">Play</button>
-    </form>
-
+    <!-- Video player and progress bar -->
     <div id="hero">
-      <div id="output">
-        <div id="progressBar"></div>
-        <!-- The video player will be added here -->
-      </div>
+      <div id="progressBar"></div>
+      <!-- The video player will be added here -->
+      <video id="my-video" class="video-js vjs-styles-defaults" controls preload="none" >
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that
+          <a href="https://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+        </p>
+        <track id="subtitleFile" kind="subtitles" srclang="en" label="English" default>
+      </video>
 
       <!-- Statistics -->
       <div id="status">
@@ -37,7 +40,11 @@
         </div>
       </div>
     </div>
-    
+
+    <form id="magnet-input">
+      <input name="torrentId" placeholder="magnet:"><button type="submit">Play</button>
+    </form>
+
     <h4>Try <em>copy-pasting</em> this https url of a torrent to the input box:</h4>
     
     <pre>https://webtorrent.io/torrents/sintel.torrent</pre>
@@ -50,6 +57,9 @@
 
     <!-- Moment is used to show a human-readable remaining time -->
     <script src="http://momentjs.com/downloads/moment.min.js"></script>
+
+    <!-- Videojs - video player -->
+    <script src="https://vjs.zencdn.net/7.1.0/video.js"></script>
 
     <script src="<c:url value="/assets/js/download-torrent.js" />"></script>
   </body>

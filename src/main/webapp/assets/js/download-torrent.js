@@ -8,7 +8,6 @@ var $total = $('#total')
 var $remaining = $('#remaining')
 var $uploadSpeed = $('#uploadSpeed')
 var $downloadSpeed = $('#downloadSpeed')
-
 var client = new WebTorrent()
 
 client.on('error', function(err) {
@@ -22,7 +21,7 @@ $('form').submit(function(e) {
   var torrentId = $('form input[name=torrentId]').val()
 
   if (torrentId.length > 0)
-    downloadTorrent(torrentId)
+      client.add(torrentId, onTorrent)
 })
 
 // Download by URL hash
@@ -33,19 +32,9 @@ function onHashChange () {
   if (hash !== '') downloadTorrent(hash)
 }
 
-function downloadTorrent(torrentId) {
-  console.log('Downloading torrent from ' + torrentId)
-  client.add(torrentId, onTorrent)
-}
-
 function onTorrent(torrent) {
-  torrent.on('warning', console.log)
-  torrent.on('error', console.log)
 
-  console.log('Got torrent metadata!')
-  console.log('Torrent info hash: ' + torrent.infoHash + ' ' +
-    '<a href="' + torrent.magnetURI + '" target="_blank">[Magnet URI]</a> ' +
-    '<a href="' + torrent.torrentFileBlobURL + '" target="_blank" download="' + torrent.name + '.torrent">[Download .torrent]</a>')
+  var player = null;
 
   // Find largest file
   var largestFile = torrent.files[0]
@@ -58,13 +47,14 @@ function onTorrent(torrent) {
   $streamedFileName.html(largestFile.name)
   
   // Stream the file in the browser
-  largestFile.appendTo('#output')
+  largestFile.renderTo('video#my-video', function() {
+    player(document.querySelector('.video-js'));
+    player.play();
+  });
 
   // hide magnet input
   $('#magnet-input').slideUp()
 
-  // show player
-  $('#hero').slideDown()
 
   // Trigger statistics refresh
   torrent.on('done', onDone)
