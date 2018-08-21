@@ -34,3 +34,6 @@ target/
 # Intellij IDEA's file
 .idea/
 *.iml
+
+# Database's infomation folder
+etc/
