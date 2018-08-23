@@ -6,29 +6,34 @@
 
   <display-name>Dual Sub Anime</display-name>
 
-	<!-- Spring MVC -->
+  <!-- Bootstrap listener to start up and shut down Spring's root WebApplicationContext -->
+	<listener>
+		<listener-class>
+			org.springframework.web.context.ContextLoaderListener
+		</listener-class>
+	</listener>
+
+	<!-- Root WebApplicationContext -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/configs/*.xml</param-value>
 	</context-param>
 
-  <listener>
-    <listener-class>
-      org.springframework.web.context.ContextLoaderListener
-    </listener-class>
-  </listener>
-
-	<!-- Load servlet dispatcher. This config is manage all path of project. -->
+	<!-- Servlet dispatcher context -->
 	<servlet>
-		<servlet-name>mvc-dispatcher</servlet-name>
+		<servlet-name>app</servlet-name>
 	  <servlet-class>
       org.springframework.web.servlet.DispatcherServlet
     </servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/app-servlet.xml</param-value>
+		</init-param>
 	  <load-on-startup>1</load-on-startup>
 	</servlet>
 
 	<servlet-mapping>
-		<servlet-name>mvc-dispatcher</servlet-name>
+		<servlet-name>app</servlet-name>
 	  <url-pattern>/</url-pattern>
 	</servlet-mapping>
 
