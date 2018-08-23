@@ -22,7 +22,7 @@ public class MovieController {
   @RequestMapping(value = "/")
   public ModelAndView index() {
     logger.info("home page");
-    ModelAndView model = new ModelAndView("movies/movie");
+    ModelAndView model = new ModelAndView("home");
     model.addObject("movie", new Movie());
     model.addObject("movies", movieService.loadAll());
     return model;
@@ -37,6 +37,6 @@ public class MovieController {
       model.addAttribute("msg", "Movie not found");
     }
     model.addAttribute("movie", movie);
-    return "movies/movie";
+    return "home";
   }
 }
