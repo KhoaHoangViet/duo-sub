@@ -22,18 +22,12 @@ public class MovieDAOImpl extends GenericDAO<Integer, Movie> implements MovieDAO
     getSession().saveOrUpdate(movie);
   }
 
+  public Movie findByTitle(String title) {
+    return getSession().get(Movie.class, title);
+  }
+
   @SuppressWarnings("unchecked")
   public List<Movie> loadAll() {
     return getSession().createQuery("from Movie").getResultList();
-  }
-
-  public Movie findByTitle(String movie) {
-    return getSession().get(Movie.class, movie);
-  }
-
-  @Override
-  public Movie update(Movie movie) {
-    getSession().update(movie);
-    return movie;
   }
 }

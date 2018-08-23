@@ -12,6 +12,5 @@ public interface MovieDAO extends BaseDAO<Integer, Movie> {
 
   Movie findByTitle(String movieTitle);
 
-  Movie update(Movie movie);
-
 }
+
